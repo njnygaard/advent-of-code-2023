@@ -1,4 +1,11 @@
 # Advent of Code 2023
+# Notes
+
+```bash
+go build -o run && run
+```
+
+
 ## 1a
 
 Pretty fun, nothing too bad.

@@ -19,6 +19,7 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	schematic := make([][]rune, 0)
 	var sum uint64
+	sum = 0
 
 	// Could refactor but I decided to do the padding while scanning.
 	// Instead of scanning first and then padding later.
@@ -54,6 +55,7 @@ func main() {
 	//}
 
 	for i := 1; i < len(schematic)-1; i++ {
+		fmt.Printf("Line %d\n", i)
 		for j := 1; j < len(schematic[i])-1; j++ {
 			if schematic[i][j] == '*' {
 				if res, ratio := checkSurroundings(i, j, schematic); res {
@@ -132,7 +134,7 @@ func checkSurroundings(i int, j int, m [][]rune) (bool, int) {
 
 	ratio := 0
 	gears = removeDuplicateInt(gears)
-	if len(gears) == 2 {
+	if len(gears) > 1 {
 		fmt.Printf("Gears: %v\n", gears)
 		ratio = gears[0] * gears[1]
 	}

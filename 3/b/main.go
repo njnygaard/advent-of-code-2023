@@ -58,9 +58,9 @@ func main() {
 		fmt.Printf("Line %d\n", i)
 		for j := 1; j < len(schematic[i])-1; j++ {
 			if schematic[i][j] == '*' {
-        if i == 45 {
-          fmt.Printf("line45\n")
-        }
+				if i == 45 {
+					fmt.Printf("line45\n")
+				}
 				if res, ratio := checkSurroundings(i, j, schematic); res {
 					fmt.Printf("Check Surroundings hit at i:%d and j:%d\n", i, j)
 					fmt.Printf("Ratio: %d\n", ratio)
@@ -88,59 +88,95 @@ func extractNumber(i int, j int, m [][]rune) int {
 		runes = append([]rune{m[i][jb]}, runes...)
 		jb--
 	}
-  jf := j + 1
+	jf := j + 1
 	for unicode.IsNumber(m[i][jf]) {
 		runes = append(runes, m[i][jf])
 		jf++
 	}
 
-  fmt.Printf("runes: %v\n", string(runes))
+	//fmt.Printf("runes: %v\n", string(runes))
 	num, err := strconv.Atoi(string(runes))
 	if err != nil {
 		fmt.Printf("fuck\n")
 	}
-  fmt.Printf("num: %d\n", num)
+	//fmt.Printf("num: %d\n", num)
 	return num
 }
 
 func checkSurroundings(i int, j int, m [][]rune) (bool, int) {
 
 	gears := make([]int, 0)
-	// Just check everything in a redundant pattern...
-	// beginning
+	// top
 	if isNumber(m[i-1][j-1]) {
 		gears = append(gears, extractNumber(i-1, j-1, m))
+		goto Middle
 	}
-	if isNumber(m[i][j-1]) {
-		gears = append(gears, extractNumber(i, j-1, m))
-	}
-	if isNumber(m[i+1][j-1]) {
-		gears = append(gears, extractNumber(i+1, j-1, m))
-	}
-
-	// middle
 	if isNumber(m[i-1][j]) {
 		gears = append(gears, extractNumber(i-1, j, m))
+		goto Middle
 	}
-	if isNumber(m[i+1][j]) {
-		gears = append(gears, extractNumber(i+1, j, m))
-	}
-
-	// end
 	if isNumber(m[i-1][j+1]) {
 		gears = append(gears, extractNumber(i-1, j+1, m))
+		goto Middle
+	}
+
+Middle:
+	// middle
+	if isNumber(m[i][j-1]) {
+		gears = append(gears, extractNumber(i, j-1, m))
 	}
 	if isNumber(m[i][j+1]) {
 		gears = append(gears, extractNumber(i, j+1, m))
 	}
+
+	// bottom
+	if isNumber(m[i+1][j-1]) {
+		gears = append(gears, extractNumber(i+1, j-1, m))
+		goto Processing
+	}
+	if isNumber(m[i+1][j]) {
+		gears = append(gears, extractNumber(i+1, j, m))
+		goto Processing
+	}
 	if isNumber(m[i+1][j+1]) {
 		gears = append(gears, extractNumber(i+1, j+1, m))
+		goto Processing
 	}
+	//// beginning
+	//if isNumber(m[i-1][j-1]) {
+	//	gears = append(gears, extractNumber(i-1, j-1, m))
+	//}
+	//if isNumber(m[i][j-1]) {
+	//	gears = append(gears, extractNumber(i, j-1, m))
+	//}
+	//if isNumber(m[i+1][j-1]) {
+	//	gears = append(gears, extractNumber(i+1, j-1, m))
+	//}
 
+	//// middle
+	//if isNumber(m[i-1][j]) {
+	//	gears = append(gears, extractNumber(i-1, j, m))
+	//}
+	//if isNumber(m[i+1][j]) {
+	//	gears = append(gears, extractNumber(i+1, j, m))
+	//}
+
+	//// end
+	//if isNumber(m[i-1][j+1]) {
+	//	gears = append(gears, extractNumber(i-1, j+1, m))
+	//}
+	//if isNumber(m[i][j+1]) {
+	//	gears = append(gears, extractNumber(i, j+1, m))
+	//}
+	//if isNumber(m[i+1][j+1]) {
+	//	gears = append(gears, extractNumber(i+1, j+1, m))
+	//}
+
+Processing:
 	ratio := 0
-  fmt.Printf("Non deduped gears: %v\n", gears)
-  // ToDo: Removing duplicats like 44*44 gear on line 45 of input.
-	gears = removeDuplicateInt(gears)
+	fmt.Printf("Non deduped gears: %v\n", gears)
+	// ToDo: Removing duplicats like 44*44 gear on line 45 of input.
+	//gears = removeDuplicateInt(gears)
 	if len(gears) > 1 {
 		fmt.Printf("Gears: %v\n", gears)
 		ratio = gears[0] * gears[1]

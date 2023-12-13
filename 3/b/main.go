@@ -18,7 +18,7 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	schematic := make([][]rune, 0)
-	sum := 0
+	var sum uint64
 
 	// Could refactor but I decided to do the padding while scanning.
 	// Instead of scanning first and then padding later.
@@ -59,7 +59,7 @@ func main() {
         if res, ratio := checkSurroundings(i, j, schematic); res {
           fmt.Printf("Check Surroundings hit at i:%d and j:%d\n", i,j)
           fmt.Printf("Ratio: %d\n", ratio)
-          sum += ratio
+          sum += uint64(ratio)
 				}
 			}
 		}
@@ -98,52 +98,57 @@ func extractNumber(i int, j int, m [][]rune)(int){
 
 func checkSurroundings(i int, j int, m [][]rune) (bool,int) {
 
-	count := 0
   gears := make([]int,0)
 	// Just check everything in a redundant pattern...
 	// beginning
 	if isNumber(m[i-1][j-1]) {
-		count++
     gears = append(gears, extractNumber(i-1, j-1, m))
 	}
 	if isNumber(m[i][j-1]) {
-		count++
     gears = append(gears, extractNumber(i, j-1, m))
 	}
 	if isNumber(m[i+1][j-1]) {
-		count++
     gears = append(gears, extractNumber(i+1, j-1, m))
 	}
 
 	// middle
 	if isNumber(m[i-1][j]) {
-		count++
     gears = append(gears, extractNumber(i-1, j, m))
 	}
 	if isNumber(m[i+1][j]) {
-		count++
     gears = append(gears, extractNumber(i+1, j, m))
 	}
 
 	// end
 	if isNumber(m[i-1][j+1]) {
-		count++
     gears = append(gears, extractNumber(i-1, j+1, m))
 	}
 	if isNumber(m[i][j+1]) {
-		count++
     gears = append(gears, extractNumber(i, j+1, m))
 	}
 	if isNumber(m[i+1][j+1]) {
-		count++
     gears = append(gears, extractNumber(i+1, j+1, m))
 	}
 
   ratio := 0
-  if len(gears) ==2 {
+  gears = removeDuplicateInt(gears)
+  if len(gears) == 2 {
+    fmt.Printf("Gears: %v\n", gears)
     ratio = gears[0]*gears[1]
   }
-	return count > 1, ratio
+	return ratio > 1, ratio
+}
+
+func removeDuplicateInt(intSlice []int) []int {
+    allKeys := make(map[int]bool)
+    list := []int{}
+    for _, item := range intSlice {
+        if _, value := allKeys[item]; !value {
+            allKeys[item] = true
+            list = append(list, item)
+        }
+    }
+    return list
 }
 
 func findBound(n []rune, x int) (l int) {

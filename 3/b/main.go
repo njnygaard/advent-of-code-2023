@@ -58,6 +58,9 @@ func main() {
 		fmt.Printf("Line %d\n", i)
 		for j := 1; j < len(schematic[i])-1; j++ {
 			if schematic[i][j] == '*' {
+        if i == 45 {
+          fmt.Printf("line45\n")
+        }
 				if res, ratio := checkSurroundings(i, j, schematic); res {
 					fmt.Printf("Check Surroundings hit at i:%d and j:%d\n", i, j)
 					fmt.Printf("Ratio: %d\n", ratio)
@@ -80,21 +83,23 @@ func extractNumber(i int, j int, m [][]rune) int {
 
 	runes = append(runes, m[i][j])
 
-	jT := j - 1
-	for unicode.IsNumber(m[i][jT]) {
-		runes = append([]rune{m[i][jT]}, runes...)
-		jT--
+	jb := j - 1
+	for unicode.IsNumber(m[i][jb]) {
+		runes = append([]rune{m[i][jb]}, runes...)
+		jb--
 	}
-	jT = j + 1
-	for unicode.IsNumber(m[i][jT]) {
-		runes = append(runes, m[i][jT])
-		jT++
+  jf := j + 1
+	for unicode.IsNumber(m[i][jf]) {
+		runes = append(runes, m[i][jf])
+		jf++
 	}
 
+  fmt.Printf("runes: %v\n", string(runes))
 	num, err := strconv.Atoi(string(runes))
 	if err != nil {
 		fmt.Printf("fuck\n")
 	}
+  fmt.Printf("num: %d\n", num)
 	return num
 }
 
@@ -133,6 +138,8 @@ func checkSurroundings(i int, j int, m [][]rune) (bool, int) {
 	}
 
 	ratio := 0
+  fmt.Printf("Non deduped gears: %v\n", gears)
+  // ToDo: Removing duplicats like 44*44 gear on line 45 of input.
 	gears = removeDuplicateInt(gears)
 	if len(gears) > 1 {
 		fmt.Printf("Gears: %v\n", gears)

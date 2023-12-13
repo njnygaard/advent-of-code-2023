@@ -11,6 +11,7 @@ import (
 
 func main() {
 	file, err := os.Open("./input")
+	//file, err := os.Open("./ti")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -105,8 +106,25 @@ func extractNumber(i int, j int, m [][]rune) int {
 
 func checkSurroundings(i int, j int, m [][]rune) (bool, int) {
 
+	/*
+
+	Missing Cases, both top both bottom
+	....*....
+	.157.682.
+
+	.476.774.
+	....*....
+	*/
+
 	gears := make([]int, 0)
 	// top
+
+	if m[i-1][j] == '.' && isNumber(m[i-1][j-1]) && isNumber(m[i-1][j+1]) {
+		gears = append(gears, extractNumber(i-1, j-1, m))
+		gears = append(gears, extractNumber(i-1, j+1, m))
+		goto Processing
+	}
+
 	if isNumber(m[i-1][j-1]) {
 		gears = append(gears, extractNumber(i-1, j-1, m))
 		goto Middle
@@ -129,6 +147,13 @@ Middle:
 		gears = append(gears, extractNumber(i, j+1, m))
 	}
 
+	if m[i+1][j] == '.' && isNumber(m[i+1][j-1]) && isNumber(m[i+1][j+1]) {
+		fmt.Printf("hiiit\n")
+		gears = append(gears, extractNumber(i+1, j-1, m))
+		gears = append(gears, extractNumber(i+1, j+1, m))
+		goto Processing
+	}
+
 	// bottom
 	if isNumber(m[i+1][j-1]) {
 		gears = append(gears, extractNumber(i+1, j-1, m))
@@ -142,41 +167,12 @@ Middle:
 		gears = append(gears, extractNumber(i+1, j+1, m))
 		goto Processing
 	}
-	//// beginning
-	//if isNumber(m[i-1][j-1]) {
-	//	gears = append(gears, extractNumber(i-1, j-1, m))
-	//}
-	//if isNumber(m[i][j-1]) {
-	//	gears = append(gears, extractNumber(i, j-1, m))
-	//}
-	//if isNumber(m[i+1][j-1]) {
-	//	gears = append(gears, extractNumber(i+1, j-1, m))
-	//}
-
-	//// middle
-	//if isNumber(m[i-1][j]) {
-	//	gears = append(gears, extractNumber(i-1, j, m))
-	//}
-	//if isNumber(m[i+1][j]) {
-	//	gears = append(gears, extractNumber(i+1, j, m))
-	//}
-
-	//// end
-	//if isNumber(m[i-1][j+1]) {
-	//	gears = append(gears, extractNumber(i-1, j+1, m))
-	//}
-	//if isNumber(m[i][j+1]) {
-	//	gears = append(gears, extractNumber(i, j+1, m))
-	//}
-	//if isNumber(m[i+1][j+1]) {
-	//	gears = append(gears, extractNumber(i+1, j+1, m))
-	//}
 
 Processing:
 	ratio := 0
-	fmt.Printf("Non deduped gears: %v\n", gears)
+	//fmt.Printf("Non deduped gears: %v\n", gears)
 	if len(gears) > 1 {
-		fmt.Printf("Gears: %v\n", gears)
+		fmt.Printf("Gear Pairs: %v\n", gears)
 		ratio = gears[0] * gears[1]
 	}
 	return ratio > 1, ratio

@@ -38,9 +38,10 @@ func main() {
     games = append(games, parseInput(line))
 	}
 
-  rcheck(games)
+  hits := rcheck(games)
 
-  fmt.Printf("Sum: %d\n", sum)
+  //fmt.Printf("Sum: %d\n", sum)
+  fmt.Printf("Hits: %d\n", hits+len(games))
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -61,13 +62,19 @@ func rcheck(g []Game)(hits int){
         }
       }
     }
+    //g[i].points = powInt(2, g[i].hits-1)
+    //sum += g[i].points
+
+    // This Game's Hits
     g[i].hits = gh
-    g[i].points = powInt(2, g[i].hits-1)
-    sum += g[i].points
+    // Recursive Hits
     hits += gh
+    // Hits for SubGames
+    hits += rcheck(g[i+1:i+1+gh])
   }
   return hits
 }
+
 func check(g Game)(hits int){
   for i:= range g.yours {
     for j:= range g.winners {

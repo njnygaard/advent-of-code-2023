@@ -175,8 +175,6 @@ Middle:
 Processing:
 	ratio := 0
 	fmt.Printf("Non deduped gears: %v\n", gears)
-	// ToDo: Removing duplicats like 44*44 gear on line 45 of input.
-	//gears = removeDuplicateInt(gears)
 	if len(gears) > 1 {
 		fmt.Printf("Gears: %v\n", gears)
 		ratio = gears[0] * gears[1]

@@ -55,11 +55,11 @@ func main() {
 
 	for i := 1; i < len(schematic)-1; i++ {
 		for j := 1; j < len(schematic[i])-1; j++ {
-      if schematic[i][j] == '*'{
-        if res, ratio := checkSurroundings(i, j, schematic); res {
-          fmt.Printf("Check Surroundings hit at i:%d and j:%d\n", i,j)
-          fmt.Printf("Ratio: %d\n", ratio)
-          sum += uint64(ratio)
+			if schematic[i][j] == '*' {
+				if res, ratio := checkSurroundings(i, j, schematic); res {
+					fmt.Printf("Check Surroundings hit at i:%d and j:%d\n", i, j)
+					fmt.Printf("Ratio: %d\n", ratio)
+					sum += uint64(ratio)
 				}
 			}
 		}
@@ -73,82 +73,82 @@ func main() {
 	}
 }
 
-func extractNumber(i int, j int, m [][]rune)(int){
-  runes := make([]rune, 0)
+func extractNumber(i int, j int, m [][]rune) int {
+	runes := make([]rune, 0)
 
-  runes = append(runes, m[i][j])
+	runes = append(runes, m[i][j])
 
-  jT := j-1
-  for unicode.IsNumber(m[i][jT]) {
-    runes = append([]rune{m[i][jT]}, runes...)    
-    jT--
-  }
-  jT = j+1
-  for unicode.IsNumber(m[i][jT]) {
-    runes = append(runes, m[i][jT])    
-    jT++
-  }
+	jT := j - 1
+	for unicode.IsNumber(m[i][jT]) {
+		runes = append([]rune{m[i][jT]}, runes...)
+		jT--
+	}
+	jT = j + 1
+	for unicode.IsNumber(m[i][jT]) {
+		runes = append(runes, m[i][jT])
+		jT++
+	}
 
-  num, err := strconv.Atoi(string(runes))
-  if err != nil {
-    fmt.Printf("fuck\n")
-  }
-  return num
+	num, err := strconv.Atoi(string(runes))
+	if err != nil {
+		fmt.Printf("fuck\n")
+	}
+	return num
 }
 
-func checkSurroundings(i int, j int, m [][]rune) (bool,int) {
+func checkSurroundings(i int, j int, m [][]rune) (bool, int) {
 
-  gears := make([]int,0)
+	gears := make([]int, 0)
 	// Just check everything in a redundant pattern...
 	// beginning
 	if isNumber(m[i-1][j-1]) {
-    gears = append(gears, extractNumber(i-1, j-1, m))
+		gears = append(gears, extractNumber(i-1, j-1, m))
 	}
 	if isNumber(m[i][j-1]) {
-    gears = append(gears, extractNumber(i, j-1, m))
+		gears = append(gears, extractNumber(i, j-1, m))
 	}
 	if isNumber(m[i+1][j-1]) {
-    gears = append(gears, extractNumber(i+1, j-1, m))
+		gears = append(gears, extractNumber(i+1, j-1, m))
 	}
 
 	// middle
 	if isNumber(m[i-1][j]) {
-    gears = append(gears, extractNumber(i-1, j, m))
+		gears = append(gears, extractNumber(i-1, j, m))
 	}
 	if isNumber(m[i+1][j]) {
-    gears = append(gears, extractNumber(i+1, j, m))
+		gears = append(gears, extractNumber(i+1, j, m))
 	}
 
 	// end
 	if isNumber(m[i-1][j+1]) {
-    gears = append(gears, extractNumber(i-1, j+1, m))
+		gears = append(gears, extractNumber(i-1, j+1, m))
 	}
 	if isNumber(m[i][j+1]) {
-    gears = append(gears, extractNumber(i, j+1, m))
+		gears = append(gears, extractNumber(i, j+1, m))
 	}
 	if isNumber(m[i+1][j+1]) {
-    gears = append(gears, extractNumber(i+1, j+1, m))
+		gears = append(gears, extractNumber(i+1, j+1, m))
 	}
 
-  ratio := 0
-  gears = removeDuplicateInt(gears)
-  if len(gears) == 2 {
-    fmt.Printf("Gears: %v\n", gears)
-    ratio = gears[0]*gears[1]
-  }
+	ratio := 0
+	gears = removeDuplicateInt(gears)
+	if len(gears) == 2 {
+		fmt.Printf("Gears: %v\n", gears)
+		ratio = gears[0] * gears[1]
+	}
 	return ratio > 1, ratio
 }
 
 func removeDuplicateInt(intSlice []int) []int {
-    allKeys := make(map[int]bool)
-    list := []int{}
-    for _, item := range intSlice {
-        if _, value := allKeys[item]; !value {
-            allKeys[item] = true
-            list = append(list, item)
-        }
-    }
-    return list
+	allKeys := make(map[int]bool)
+	list := []int{}
+	for _, item := range intSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }
 
 func findBound(n []rune, x int) (l int) {

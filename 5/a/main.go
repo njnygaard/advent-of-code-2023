@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const MAX_INT_FOUND = 4288015283
+
 type Entry struct {
 	// Each line within a map contains three numbers: the destination range start, the source range start, and the range length.
 	DestinationRangeStart int
@@ -19,11 +21,12 @@ type Entry struct {
 type Map struct {
 	Name    string
 	Entries []Entry
+  Map []int
 }
 
 func main() {
 
-	var seeds []string
+	var seeds []int
 
 	// The input for this one is not really regular.
 	// I don't see a problem yet massaging the input in to separate files.
@@ -45,6 +48,7 @@ func main() {
 		var m Map
 		m.Entries = make([]Entry, 0)
 		m.Name = mapNames[i]
+    m.Map = make([]int, 0)
 		maps = append(maps, m)
 	}
 
@@ -59,7 +63,14 @@ func main() {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		seeds = strings.Split(line, " ")
+    s := strings.Split(line, " ") 
+    for i := range s{
+      num, err := strconv.Atoi(s[i])
+      if err != nil {
+        fmt.Printf("Error parsing seed %s", s[i])
+      }
+      seeds = append(seeds, num)
+    }
 	}
 
 	for i := range maps {
@@ -88,26 +99,65 @@ func main() {
 				case 2:
 					e.RangeLength = num
 				}
+
 			}
 			maps[i].Entries = append(maps[i].Entries, e)
 		}
 	}
 
-	fmt.Println(seeds)
+  outputs := make([]int, 0)
+  for i := range seeds {
+    //fmt.Printf("Seed: %d\n", seeds[i])
+    output := process(seeds[i], maps)
+    fmt.Printf("Output: %d\n", output)
+    outputs = append(outputs, output)
+  }
 
-	for i := range maps {
-		fmt.Printf("Name: %s\n", maps[i].Name)
+  min := 0
+  for i:= range outputs {
+    if i == 0 {
+      min = outputs[i]
+    }
+    if outputs[i] < min {
+      min = outputs[i]
+    }
+  }
 
-		for j := range maps[i].Entries {
-			fmt.Printf("\tDestinationRangeStart: %d\n\tSourceRangeStart: %d\n\tRangeLength: %d\n\n", maps[i].Entries[j].DestinationRangeStart, maps[i].Entries[j].SourceRangeStart, maps[i].Entries[j].RangeLength)
-		}
-	}
+  fmt.Printf("Lowest: %d\n", min)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func parse(l string) {
+func process(s int, m []Map)(int){
+  //output := 0
+  for i := range m {
+    for j := range m[i].Entries {
+      //fmt.Printf("Seed: %d  SourceRangeStart: %d  RangeLength: %d\n", s, m[i].Entries[j].SourceRangeStart, m[i].Entries[j].RangeLength)
+      if s >= m[i].Entries[j].SourceRangeStart && s < m[i].Entries[j].SourceRangeStart + m[i].Entries[j].RangeLength {
+        //fmt.Printf("hit %d\n", s)
+        offset := s - m[i].Entries[j].SourceRangeStart
+        s = m[i].Entries[j].DestinationRangeStart + offset
+        //fmt.Printf("tih %d\n", s)
+        break
+      }
+    }
+    //fmt.Printf("tih %d\n", s)
+  }
+  return s
+} 
 
-}
+//func populateMap(m Map)(t []int){
+//  t = make([]int, MAX_INT_FOUND)
+//  for i := range t {
+//    t[i] = i
+//  }
+//  for i := range m.Entries {
+//    for j := m.Entries[i].SourceRangeStart; j < m.Entries[i].RangeLength; j ++ {
+//      t[j] = m.Entries[i].DestinationRangeStart + j 
+//    }
+//  }
+//  return t
+//}
+

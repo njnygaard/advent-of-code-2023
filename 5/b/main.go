@@ -26,7 +26,8 @@ type Map struct {
 
 func main() {
 
-	var seeds []int
+	//var seeds []int
+	var seedRanges []int
 
 	// The input for this one is not really regular.
 	// I don't see a problem yet massaging the input in to separate files.
@@ -69,16 +70,7 @@ func main() {
       if err != nil {
         fmt.Printf("Error parsing seed %s", s[i])
       }
-
-      if i % 2 == 0 {
-        seeds = append(seeds, num)
-      }
-      if i % 2 == 1 {
-        rangeStart := seeds[len(seeds)-1]+1
-        for j := 0; j < num; j++ {
-          seeds = append(seeds, rangeStart+j)
-        }
-      }
+      seedRanges = append(seedRanges, num)
     }
 	}
 
@@ -114,29 +106,59 @@ func main() {
 		}
 	}
 
-  outputs := make([]int, 0)
-  for i := range seeds {
-    //fmt.Printf("Seed: %d\n", seeds[i])
-    output := process(seeds[i], maps)
-    fmt.Printf("Output: %d\n", output)
-    outputs = append(outputs, output)
-  }
+  //outputs := make([]int, 0)
+  //for i := range seeds {
+  //  //fmt.Printf("Seed: %d\n", seeds[i])
+  //  output := process(seeds[i], maps)
+  //  fmt.Printf("Output: %d\n", output)
+  //  outputs = append(outputs, output)
+  //}
 
-  min := 0
-  for i:= range outputs {
-    if i == 0 {
-      min = outputs[i]
-    }
-    if outputs[i] < min {
-      min = outputs[i]
+  //min := 0
+  //for i:= range outputs {
+  //  if i == 0 {
+  //    min = outputs[i]
+  //  }
+  //  if outputs[i] < min {
+  //    min = outputs[i]
+  //  }
+  //}
+
+  //fmt.Printf("Lowest: %d\n", min)
+
+  for i := 0; i < 100000000; i++ {
+    output := reverse(i, maps)
+    if isSeed(output, seedRanges) {
+      fmt.Printf("Lowest: %d\n", i)
+      break
     }
   }
-
-  fmt.Printf("Lowest: %d\n", min)
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func isSeed(v int, s []int)(bool){
+  for i := 0; i < len(s); i+=2 {
+    if v >= s[i] && v < s[i]+s[i+1] {
+      return true
+    }
+  }
+  return false
+}
+
+func reverse(s int, m []Map)(int){
+  for i := len(m)-1; i >= 0; i-- {
+    for j := range m[i].Entries {
+      if s >= m[i].Entries[j].DestinationRangeStart && s < m[i].Entries[j].DestinationRangeStart + m[i].Entries[j].RangeLength {
+        offset := s - m[i].Entries[j].DestinationRangeStart
+        s = m[i].Entries[j].SourceRangeStart + offset
+        break
+      }
+    }
+  }
+  return s
 }
 
 func process(s int, m []Map)(int){
